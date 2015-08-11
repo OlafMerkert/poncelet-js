@@ -1,0 +1,37 @@
+<<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>The Game of Poncelet</title>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="bootstrap-theme.min.css"/>
+    <style type="text/css">
+      .page-contents {
+      padding-top: 100px;
+      padding-left: 30px;
+      padding-right: 30px;
+      padding-bottom: 50px;
+      }
+    </style>
+  </head>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="raphael-min.js"></script>
+  <script type="text/javascript" src="poncelet-conics.js"></script>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-header">
+        <a class="navbar-brand">The Game of Poncelet</a>
+      </div>
+    </nav>
+    <div class="container page-contents">
+      <h1>The Game of Poncelet</h1>
+      <p>Play the game of Poncelet! Choose two ellipses and a point, the find a tangent to the other ellipse going through the point. The tangent meets the first curve in another point, and this point has another tangent to the second ellipse.</p>
+
+      <canvas id="poncelet-canvas"></canvas>
+    </div>
+  </body>
+</html>
