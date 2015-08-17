@@ -1,4 +1,4 @@
-<<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
@@ -15,12 +15,16 @@
       padding-right: 30px;
       padding-bottom: 50px;
       }
+      #poncelet-canvas {
+      border: 2px outset gray;
+      }
     </style>
   </head>
-  <script type="text/javascript" src="bootstrap.min.js"></script>
-  <script type="text/javascript" src="jquery-1.11.3.min.js"></script>
-  <script type="text/javascript" src="raphael-min.js"></script>
-  <script type="text/javascript" src="poncelet-conics.js"></script>
+  <script src="jquery-1.11.3.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <script src="raphael-min.js"></script>
+  <script src="canvas-helper.js"></script>
+  <script src="poncelet-conics.js"></script>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-header">
@@ -31,7 +35,7 @@
       <h1>The Game of Poncelet</h1>
       <p>Play the game of Poncelet! Choose two ellipses and a point, the find a tangent to the other ellipse going through the point. The tangent meets the first curve in another point, and this point has another tangent to the second ellipse.</p>
 
-      <canvas id="poncelet-canvas"></canvas>
+      <canvas id="poncelet-canvas" width="800" height="600"></canvas>
     </div>
   </body>
 </html>
