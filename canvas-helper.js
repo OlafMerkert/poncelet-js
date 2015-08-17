@@ -4,7 +4,6 @@
 function MyCanvas(id) {
     this.canvas = document.getElementById(id);
     this.context = this.canvas.getContext("2d");
-    this.context.fillStyle = "black";
     this.context.translate(0.5, 0.5);
     var $c = $(this.canvas);
     this.width = $c.width();
@@ -21,13 +20,30 @@ function MyCanvas(id) {
         this.context.fillStyle = color;
         this.context.strokeStyle = color;
     };
+    this.saveColor = function () {
+        this.fillColor = this.context.fillStyle;
+        this.strokeColor = this.context.strokeStyle;
+    };
+    this.restoreColor = function () {
+        if (this.fillColor && this.strokeColor) {
+            this.context.fillStyle = this.fillColor;
+            this.context.strokeStyle = this.strokeColor;
+        } else {
+            this.setColor("black");
+        }
+    };
+    this.setColor("black");
     this.drawRed = function (obj) {
+        this.saveColor();
         this.setColor("red");
         this.draw(obj);
+        this.restoreColor();
     };
     this.drawBlue = function (obj) {
+        this.saveColor();
         this.setColor("blue");
         this.draw(obj);
+        this.restoreColor();
     };
 };
 
