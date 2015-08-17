@@ -145,8 +145,4 @@ function circleFromPoints(p1, p2, p3) {
 window.onload = function () {
     console.log("preparing canvas");
     var pc = getPonceletCanvas();
-    var points = [new Point(150, 10), new Point(150, 100), new Point(200, 50)];
-    var circle = circleFromPoints(points[0], points[1], points[2]);
-    pc.drawMany(points);
-    pc.draw(circle);
 }
