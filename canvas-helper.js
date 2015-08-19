@@ -74,6 +74,10 @@ function Point(x, y) {
         ctx.arc(this.x, this.y, dot_radius, 0, 2*Math.PI);
         ctx.fill();
     };
+    this.equal = function (point) {
+        return (point.x - this.x == 0) && (point.y - this.y == 0);
+    };
+    // a vector from this point
     this.relative = function (point) {
         return new Point(point.x - this.x, point.y - this.y);
     };
@@ -83,6 +87,10 @@ function Point(x, y) {
     this.distance = function (point) {
         return Math.sqrt(Math.pow(point.x - this.x, 2) +
                          Math.pow(point.y - this.y, 2));
+    };
+    this.norm = function () {
+        return Math.sqrt(Math.pow(this.x, 2) +
+                         Math.pow(this.y, 2));
     };
     this.rotate90 = function () {
         return new Point(-y, x);
@@ -134,6 +142,14 @@ function Circle(center, radius) {
         ctx.beginPath();
         ctx.arc(this.center.x, this.center.y, this.radius, 0, 2*Math.PI);
         ctx.stroke();
+    };
+    // project any point different from center onto the circle
+    this.project = function (point) {
+        if (! this.center.equal(point)) {
+            var delta = this.center.relative(point);
+            var line = new Line(this.center, delta);
+            return line.param(this.radius / delta.norm());
+        }
     };
 }
 
@@ -213,6 +229,42 @@ function selectBlueCircle() {
     CircleSelector(pc, function (circle) {
         blueCircle = circle;
     });
+}
+
+var blueStartingPoint;
+
+function selectStartingPoint() {
+    var pc = getPonceletCanvas();
+    if (blueCircle) {
+        var ps = new PointSelector(
+            1,
+            function (points) {
+                pc.goBlack();
+                pc.draw(points[0]);
+                blueStartingPoint = blueCircle.project(points[0]);
+                pc.draw(blueStartingPoint);
+            });
+        ps.askNextPoint(pc);
+    }
+}
+
+function drawPoncelet() {
+    var pc = getPonceletCanvas();
+    pc.goBlue();
+    if (blueCircle) {
+        pc.draw(blueCircle);
+    }
+    pc.restoreColor();
+    pc.goBlack();
+    if (blueStartingPoint) {
+        pc.draw(blueStartingPoint);
+    }
+    pc.restoreColor();
+    pc.goRed();
+    if (redCircle) {
+        pc.draw(redCircle);
+    }
+    pc.restoreColor();
 }
 
 window.onload = function () {
