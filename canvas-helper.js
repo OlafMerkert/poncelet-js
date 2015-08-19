@@ -32,6 +32,19 @@ function MyCanvas(id) {
             this.setColor("black");
         }
     };
+    this.goRed = function () {
+        this.saveColor();
+        this.setColor("red");
+    };
+    this.goBlue = function () {
+        this.saveColor();
+        this.setColor("blue");
+    };
+    this.goBlack = function () {
+        this.saveColor();
+        this.setColor("black");
+    };
+
     this.setColor("black");
     this.drawRed = function (obj) {
         this.saveColor();
@@ -135,11 +148,71 @@ function circleFromPoints(p1, p2, p3) {
     if (line.containsQ(p3)) {
         throw new CollinearPointsException(line);
     }
-    console.log("non collinear");
     var ms2 = p1.mittelsenkrechte(p2);
     var ms3 = p1.mittelsenkrechte(p3);
     var center = ms2.intersect(ms3);
     return new Circle(center, center.distance(p1));
+}
+
+function PointSelector(numberOfPoints, action) {
+    this.numberOfPoints = numberOfPoints;
+    this.points = [];
+    this.action = action;
+    this.addPoint = function (event) {
+        if (this.points.length < this.numberOfPoints) {
+            var point = new Point(event.pageX - this.offsetX,
+                                  event.pageY - this.offsetY);
+            this.points.push(point);
+            this.pc.draw(point);
+            if (this.points.length >= this.numberOfPoints) {
+                this.action(this.points);
+            }
+        } else {
+            // clean up events
+            $(this.pc.canvas).off("click");
+        }
+    };
+    this.askNextPoint = function (pc) {
+        this.pc = pc;
+        if (this.points.length < this.numberOfPoints) {
+            var $canvas = $(pc.canvas);
+            this.offsetX = $canvas.offset().left;
+            this.offsetY = $canvas.offset().top;
+            var ps = this;
+            $canvas.click(function (event) {
+                ps.addPoint(event);
+            });
+        }
+    };
+}
+
+function CircleSelector(pc, action) {
+    var ps = new PointSelector(
+        3,
+        function (points) {
+            var circle = circleFromPoints(points[0], points[1], points[2]);
+            pc.draw(circle);
+            action(circle);
+        });
+    ps.askNextPoint(pc);
+}
+
+var blueCircle, redCircle;
+
+function selectRedCircle() {
+    var pc = getPonceletCanvas();
+    pc.goRed();
+    CircleSelector(pc, function (circle) {
+        redCircle = circle;
+    });
+}
+
+function selectBlueCircle() {
+    var pc = getPonceletCanvas();
+    pc.goBlue();
+    CircleSelector(pc, function (circle) {
+        blueCircle = circle;
+    });
 }
 
 window.onload = function () {
