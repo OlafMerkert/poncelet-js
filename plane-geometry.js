@@ -7,15 +7,20 @@ function CollinearPointsException(line) {
     this.message = "Given points are collinear, cannot produce a circle through all of them.";
 }
 
+var dot_radius = 3;
+
 function Point(x, y) {
     this.x = x;
     this.y = y;
     this.drawCanvas = function (ctx) {
-        var dot_radius = 3;
         // fill circle
         ctx.beginPath();
         ctx.arc(this.x, this.y, dot_radius, 0, 2*Math.PI);
         ctx.fill();
+    };
+    this.drawRaphael = function (paper, color) {
+        var circle = paper.circle(this.x, this.y, dot_radius);
+        fill(circle, color);
     };
     this.equal = function (point) {
         return (point.x - this.x == 0) && (point.y - this.y == 0);
@@ -46,6 +51,10 @@ function Point(x, y) {
     };
 }
 
+function DirectionLessLineError() {
+    this.message = "Line has zero direction vector.";
+}
+
 function Line(point, direction) {
     this.point = point;
     this.direction = direction;
@@ -68,12 +77,47 @@ function Line(point, direction) {
             return line.param(solution[1]);
         }
     };
+    this.boundaryPoints = function (max_x, max_y) {
+        var t1, t2;
+        var min_t, max_t;
+        if (this.direction.x != 0) {
+            min_t = - this.point.x / this.direction.x;
+            max_t = (max_x - this.point.x) / this.direction.x;
+            if (max_t < min_t) {
+                t1 = max_t;
+                max_t = min_t;
+                min_t = t1;
+            }
+            if (this.direction.y != 0) {
+                t1 = - this.point.y / this.direction.y;
+                t2 = (max_y - this.point.y) / this.direction.y;
+                if (t2 < t1) {
+                    min_t = Math.max(min_t, t2);
+                    max_t = Math.min(max_t, t1);
+                } else {
+                    min_t = Math.max(min_t, t1);
+                    max_t = Math.min(max_t, t2);
+                }
+            }
+        }
+        else if (this.direction.y != 0) {
+            min_t = - this.point.y / this.direction.y;
+            max_t = (max_y - this.point.y) / this.direction.y;
+            if (max_t < min_t) {
+                t1 = max_t;
+                max_t = min_t;
+                min_t = t1;
+            }
+        } else {
+            throw new DirectionLessLineError();
+        }
+        return [this.param(min_t), this.param(max_t)];
+    };
     this.drawCanvas = function (ctx) {
         ctx.beginPath();
-        var start = this.param(-2);
-        var end = this.param(2);
-        ctx.moveTo(start.x, start.y);
-        ctx.lineTo(end.x, end.y);
+        var points = this.boundaryPoints(800, 600);
+        ctx.moveTo(points[0].x, points[0].y);
+        ctx.lineTo(points[1].x, points[1].y);
         ctx.stroke();
     };
 }
