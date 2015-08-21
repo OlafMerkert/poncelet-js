@@ -58,6 +58,10 @@ function MyCanvas(id) {
         this.draw(obj);
         this.restoreColor();
     };
+    this.reset = function () {
+        this.setColor("black");
+        this.context.clearRect(0, 0, this.width, this.height);
+    };
 };
 
 function getPonceletCanvas() {
