@@ -9,7 +9,7 @@ function MyCanvas(id) {
     this.width = $c.width();
     this.height = $c.height();
     this.draw = function (obj) {
-        return obj.draw(this.context);
+        return obj.drawCanvas(this.context);
     };
     this.drawMany = function (objs) {
         for(var i = 0; i < objs.length; i++) {

@@ -10,7 +10,7 @@ function CollinearPointsException(line) {
 function Point(x, y) {
     this.x = x;
     this.y = y;
-    this.draw = function (ctx) {
+    this.drawCanvas = function (ctx) {
         var dot_radius = 3;
         // fill circle
         ctx.beginPath();
@@ -68,7 +68,7 @@ function Line(point, direction) {
             return line.param(solution[1]);
         }
     };
-    this.draw = function (ctx) {
+    this.drawCanvas = function (ctx) {
         ctx.beginPath();
         var start = this.param(-2);
         var end = this.param(2);
@@ -81,7 +81,7 @@ function Line(point, direction) {
 function Circle(center, radius) {
     this.center = center;
     this.radius = radius;
-    this.draw = function (ctx) {
+    this.drawCanvas = function (ctx) {
         ctx.beginPath();
         ctx.arc(this.center.x, this.center.y, this.radius, 0, 2*Math.PI);
         ctx.stroke();
