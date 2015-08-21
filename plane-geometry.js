@@ -120,6 +120,14 @@ function Line(point, direction) {
         ctx.lineTo(points[1].x, points[1].y);
         ctx.stroke();
     };
+    this.drawRaphael = function (paper, color) {
+        var line = paper.path(polygonString(this.boundaryPoints(800, 600)));
+        stroke(line, color);
+    };
+}
+
+function SingularPoint() {
+    this.message = "Illegal point for this operation.";
 }
 
 function Circle(center, radius) {
@@ -130,12 +138,18 @@ function Circle(center, radius) {
         ctx.arc(this.center.x, this.center.y, this.radius, 0, 2*Math.PI);
         ctx.stroke();
     };
+    this.drawRaphael = function (paper, color) {
+        var circle = paper.circle(this.center.x, this.center.y, this.radius);
+        stroke(circle, color);
+    };
     // project any point different from center onto the circle
     this.project = function (point) {
         if (! this.center.equal(point)) {
             var delta = this.center.relative(point);
             var line = new Line(this.center, delta);
             return line.param(this.radius / delta.norm());
+        } else {
+            throw new SingularPoint();
         }
     };
 }
