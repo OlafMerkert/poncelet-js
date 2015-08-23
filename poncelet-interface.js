@@ -10,17 +10,15 @@ function drawPoncelet() {
     if (blueCircle) {
         pc.draw(blueCircle);
     }
-    pc.restoreColor();
     pc.goBlack();
     if (blueStartingPoint) {
         pc.draw(blueStartingPoint);
     }
-    pc.restoreColor();
     pc.goRed();
     if (redCircle) {
         pc.draw(redCircle);
     }
-    pc.restoreColor();
+    pc.goBlack();
 }
 
 function redrawPoncelet() {

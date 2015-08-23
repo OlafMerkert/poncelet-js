@@ -17,6 +17,15 @@ function MyPaper(id) {
     this.reset = function () {
         this.paper.clear();
     };
+    this.goBlue = function () {
+        this.setColor("blue");
+    };
+    this.goRed = function () {
+        this.setColor("red");
+    };
+    this.goBlack = function () {
+        this.setColor("black");
+    };
 }
 
 function fill(obj, color) {
