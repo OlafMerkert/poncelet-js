@@ -163,7 +163,7 @@ function Line(point, direction) {
         ctx.stroke();
     };
     this.drawRaphael = function (paper, color) {
-        var line = paper.path(polygonString(this.boundaryPoints(800, 600)));
+        var line = paper.path(polygonString(this.boundaryPoints(pc.width, pc.height)));
         stroke(line, color);
     };
 }
