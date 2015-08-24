@@ -194,6 +194,35 @@ function Circle(center, radius) {
             throw new SingularPoint();
         }
     };
+    this.intersectLine = function (line) {
+        // need to solve this equation in t:
+        // line.point -this.center + t * line.direction == this.radius
+        var a = Math.pow(line.direction.x, 2) + Math.pow(line.direction.x, 2);
+        var b = 2 * (line.direction.x * (line.point.x - this.center.x) +
+                     line.direction.y * (line.point.y - this.center.y));
+        var c = Math.pow(line.point.x - this.center.x, 2) + Math.pow(line.point.y - this.center.y, 2) - Math.pow(this.radius, 2);
+        var ts = solveQuadratic(a, b, c);
+        if (ts.length == 0) {
+            return [];
+        } else if (ts.length == 1) {
+            return [this.param(ts[0])];
+        } else {
+            return [this.param(ts[0]), this.param(ts[1])];
+        }
+    };
+}
+
+function solveQuadratic(a, b, c) {
+    // solve equation a * X^2 + b * X + c == 0
+    var D = (Math.pow(b, 2) - 4 * a * c);
+    if (D < 0) {
+        return [];
+    } else if (D == 0) {
+        return [-b/(2*a)];
+    } else {
+        var sqrtD = Math.sqrt(D);
+        return [(-b + sqrtD)/(2*a), (-b - sqrtD)/(2*a)];
+    }
 }
 
 function circleFromPoints(p1, p2, p3) {
