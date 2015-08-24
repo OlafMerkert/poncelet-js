@@ -6,8 +6,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>The Game of Poncelet</title>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/style/bootstrap-custom.css"/>
     <style type="text/css">
       .page-contents {
       padding-top: 100px;
@@ -16,27 +17,44 @@
       padding-bottom: 50px;
       }
       #poncelet-canvas {
-      border: 2px outset gray;
+      border: 2px inset gray;
+      background: white;
+      width: 100%;
+      min-height: 600px;
+      
       }
       .controls {
       margin: 1ex;
+      margin-bottom: 3ex;
       }
     </style>
   </head>
-  <script src="jquery-1.11.3.min.js"></script>
-  <script src="bootstrap.min.js"></script>
-  <script src="numeric-1.2.6.min.js"></script>
-  <script src="raphael-min.js"></script>
+  <script src="/scripts/jquery-1.11.3.js"></script>
+  <script src="/bootstrap/js/bootstrap.js"></script>
+  <script src="/scripts/numeric-1.2.6.min.js"></script>
+  <script src="/scripts/raphael-min.js"></script>
   <script src="plane-geometry.js"></script>
   <script src="raphael-helper.js"></script>
   <script src="poncelet-interface.js"></script>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-header">
-        <a class="navbar-brand">The Game of Poncelet</a>
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand">The Game of Poncelet</a>
+        </div>
       </div>
-    </nav>
-    <div class="container page-contents">
+    </div>
+    <ul class="breadcrumb">
+      <li><a href="/">
+          <span class="glyphicon glyphicon-home"></span>
+          <span class="sr-only">home</span>
+      </a></li>
+      <li><a href="/~olaf/">Olaf's Homepage</a></li>
+      <li><a href="#">Game of Poncelet</a></li>
+    </ul>
+    
+    <div class="container">
+      <div class="bs-body">
       <h1>The Game of Poncelet</h1>
       <p>Play the game of Poncelet! Choose two circles and a point on the blue circle, the find a tangent to the red circle going through the point. The tangent meets the blue circle in another point, and this point has another tangent to the red circle.</p>
 
@@ -57,6 +75,7 @@
 
       </div>
 
-      <div id="poncelet-canvas" style="height: 600px; width: 800px;"></div>
+      <div id="poncelet-canvas"></div>
+      </div>
     </body>
   </html>
