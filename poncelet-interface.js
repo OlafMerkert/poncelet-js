@@ -42,10 +42,9 @@ function PointSelector(numberOfPoints, action) {
             this.pc.draw(point);
             if (this.points.length >= this.numberOfPoints) {
                 this.action(this.points);
+                // clean up events
+                $(this.pc.canvas).off("click");
             }
-        } else {
-            // clean up events
-            $(this.pc.canvas).off("click");
         }
     };
     this.askNextPoint = function (pc) {
@@ -106,4 +105,8 @@ function selectStartingPoint() {
             });
         ps.askNextPoint(pc);
     }
+}
+
+function ponceletStep() {
+    pc.drawMany(findTangents(blueStartingPoint, redCircle));
 }

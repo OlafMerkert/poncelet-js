@@ -11,6 +11,11 @@ function MyPaper(id) {
     this.draw = function (obj) {
         return obj.drawRaphael(this.paper, this.color);
     };
+    this.drawMany = function (objs) {
+        for(var i = 0; i < objs.length; i++) {
+            this.draw(objs[i]);
+        }
+    };
     this.setColor = function (color) {
         this.color = color;
     };
