@@ -29,6 +29,9 @@ function Point(x, y) {
     this.relative = function (point) {
         return new Point(point.x - this.x, point.y - this.y);
     };
+    this.relative_normed = function (point) {
+        return this.relative(point).normed();
+    };
     this.midpoint = function (point) {
         return new Point((point.x + this.x)/2, (point.y + this.y)/2);
     };
@@ -40,14 +43,38 @@ function Point(x, y) {
         return Math.sqrt(Math.pow(this.x, 2) +
                          Math.pow(this.y, 2));
     };
+    this.scaled = function (scaleFactor) {
+        return new Point(scaleFactor * this.x, scaleFactor * this.y);
+    };
+    this.normed = function () {
+        return this.scaled(1/this.norm());
+    };
     this.rotate90 = function () {
         return new Point(-y, x);
+    };
+    this.rotate = function (alpha) {
+        var c, s;
+        c = Math.cos(alpha);
+        s = Math.sin(alpha);
+        return new Point(this.x * c - this.y * s,
+                         this.x * s + this.y * c);
+    };
+    this.rotateCos = function (c, positive) {
+        var s = Math.sqrt(1 - Math.pow(c, 2));
+        if (!positive) {
+            s = -s;
+        }
+        return new Point(this.x * c - this.y * s,
+                         this.x * s + this.y * c);
     };
     this.mittelsenkrechte = function (point) {
         return new Line(this.midpoint(point), this.relative(point).rotate90());
     };
     this.collinearQ = function (point) {
         return (this.x * point.y - this.y * point.x) == 0;
+    };
+    this.add = function (point) {
+        return new Point(this.x + point.x, this.y + point.y);
     };
 }
 
@@ -64,6 +91,10 @@ function Line(point, direction) {
     this.param = function (t) {
         return new Point(this.point.x + t * this.direction.x,
                          this.point.y + t * this.direction.y);
+    };
+    this.equal = function (line) {
+        return (this.direction.collinearQ(line.direction)
+                && this.containsQ(line.point));
     };
     this.intersect = function (line) {
         if (this.direction.collinearQ(line.direction)) {
@@ -142,6 +173,17 @@ function Circle(center, radius) {
         var circle = paper.circle(this.center.x, this.center.y, this.radius);
         stroke(circle, color);
     };
+    this.param = function (t) {
+        return new Point(this.center.x + this.radius * Math.cos(t),
+                         this.center.y + this.radius * Math.sin(t));
+    };
+    this.param_tangent = function (t) {
+        var c = Math.cos(t);
+        var s = Math.sin(t);
+        return new Line(new Point(this.center.x + this.radius * c,
+                                  this.center.x + this.radius * s),
+                        new Point(s, -c));
+    };
     // project any point different from center onto the circle
     this.project = function (point) {
         if (! this.center.equal(point)) {
@@ -164,4 +206,23 @@ function circleFromPoints(p1, p2, p3) {
     var ms3 = p1.mittelsenkrechte(p3);
     var center = ms2.intersect(ms3);
     return new Circle(center, center.distance(p1));
+}
+
+function findTangents(point, circle) {
+    // there are (at most) two lines through `point' tangent to `circle' 
+    var r, R, d;
+    r = circle.radius;
+    d = circle.center.relative(point);
+    R = d.norm();
+    if (R < r) {
+        return [];
+    } else if (R==r) {
+        return [new Line(point, d.rotate90())];
+    } else {
+        var p0 = d.scaled(r/R);
+        var p1 = p0.rotateCos(r/R, true);
+        var p2 = p0.rotateCos(r/R, false);
+        return [new Line(circle.center.add(p1), p1.rotate90()),
+                new Line(circle.center.add(p2), p2.rotate90())];
+    }
 }
