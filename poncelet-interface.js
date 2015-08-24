@@ -104,13 +104,6 @@ function selectBlueCircle() {
         blueStartingPoint = undefined;
         redStartingTangent = undefined;
         redrawPoncelet();
-        var l = new Line(blueCircle.center, new Point(0, 1));
-        var p = blueCircle.intersectLine(l);
-        console.log("how many intersection points: " + p.length);
-        for (var i = 0; i < p.length; i++) {
-            console.log("point: " + p[i].x + ", " + p[i].y);
-        }
-        pc.drawMany(p);
     });
 }
 
@@ -198,7 +191,10 @@ function drawStep(args) {
     pc.draw(args.tangent);
 }
 
-function ponceletStep() {
+function ponceletStep(n) {
+    if (!n) {
+        n = 1;
+    }
     if (blueCircle && redCircle && blueStartingPoint) {
         if (!redStartingTangent) {
             computeRedTangent();
@@ -207,10 +203,13 @@ function ponceletStep() {
         if (!currentPoncelet) {
             currentPoncelet = {"point": blueStartingPoint,
                                "tangent": redStartingTangent};
+            redrawPoncelet();
         }
         try {
-            currentPoncelet = ponceletNextStep(currentPoncelet);
-            // drawStep(currentPoncelet);
+            for (var i = 0; i < n; i++) {
+                currentPoncelet = ponceletNextStep(currentPoncelet);
+                // drawStep(currentPoncelet);
+            }
         } catch(e) {
             console.log("Exception: " + e.message + " in " + e.operation);
         }

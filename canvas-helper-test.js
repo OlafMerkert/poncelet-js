@@ -17,3 +17,13 @@ function testCircle3Points(pc) {
     pc.drawMany(points);
     pc.draw(circle);
 }
+
+function testBlueCircleLineIntersection() {
+    var l = new Line(blueCircle.center, new Point(0, 1));
+    var p = blueCircle.intersectLine(l);
+    console.log("how many intersection points: " + p.length);
+    for (var i = 0; i < p.length; i++) {
+        console.log("point: " + p[i].x + ", " + p[i].y);
+    }
+    pc.drawMany(p);
+}
