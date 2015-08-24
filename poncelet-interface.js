@@ -3,22 +3,29 @@
 // setting up Poncelet problem
 var blueCircle, redCircle;
 var blueStartingPoint;
+var redStartingTangent;
+
+var currentPoncelet;
 
 function drawPoncelet() {
     // var pc = getPonceletCanvas();
-    pc.goBlue();
+    pc.setColor("blue");
     if (blueCircle) {
         pc.draw(blueCircle);
     }
-    pc.goBlack();
+    pc.setColor("black");
     if (blueStartingPoint) {
         pc.draw(blueStartingPoint);
     }
-    pc.goRed();
+    pc.setColor("gray");
+    if (redStartingTangent) {
+        pc.draw(redStartingTangent);
+    }
+    pc.setColor("red");
     if (redCircle) {
         pc.draw(redCircle);
     }
-    pc.goBlack();
+    pc.setColor("black");
 }
 
 function redrawPoncelet() {
@@ -28,6 +35,7 @@ function redrawPoncelet() {
 
 function resetPoncelet() {
     pc.reset();
+    currentPoncelet = undefined;
 }
 
 function PointSelector(numberOfPoints, action) {
@@ -73,40 +81,140 @@ function CircleSelector(pc, action) {
 }
 
 function selectRedCircle() {
+    currentPoncelet = undefined;
     // var pc = getPonceletCanvas();
-    pc.goRed();
+    pc.setColor("red");
     CircleSelector(pc, function (circle) {
         redCircle = circle;
+        if (blueStartingPoint) {
+            computeRedTangent();
+        } else {
+            redStartingTangent = undefined;
+        }
         redrawPoncelet();
     });
 }
 
 function selectBlueCircle() {
+    currentPoncelet = undefined;
     // var pc = getPonceletCanvas();
-    pc.goBlue();
+    pc.setColor("blue");
     CircleSelector(pc, function (circle) {
         blueCircle = circle;
+        blueStartingPoint = undefined;
+        redStartingTangent = undefined;
         redrawPoncelet();
+        var l = new Line(blueCircle.center, new Point(0, 1));
+        var p = blueCircle.intersectLine(l);
+        console.log("how many intersection points: " + p.length);
+        for (var i = 0; i < p.length; i++) {
+            console.log("point: " + p[i].x + ", " + p[i].y);
+        }
+        pc.drawMany(p);
     });
-    // todo invalidate starting point
 }
 
 function selectStartingPoint() {
+    currentPoncelet = undefined;
     // var pc = getPonceletCanvas();
     if (blueCircle) {
         var ps = new PointSelector(
             1,
             function (points) {
-                // pc.goBlack();
-                // pc.draw(points[0]);
                 blueStartingPoint = blueCircle.project(points[0]);
-                // pc.draw(blueStartingPoint);
+                if (redCircle) {
+                    computeRedTangent();
+                }
                 redrawPoncelet();
             });
         ps.askNextPoint(pc);
     }
 }
 
+function computeRedTangent() {
+    if (redCircle && blueStartingPoint) {
+        var tangents = findTangents(blueStartingPoint, redCircle);
+        if (tangents.length > 0) {
+            redStartingTangent = tangents[0];
+        } else {
+            throw new GeometricMisconfiguration("compute-tangent");
+        }
+    }
+}
+
+function GeometricMisconfiguration(operation) {
+    this.message = "The configuration of the circles and points makes it impossible to perform the required geometric constructions.";
+    this.operation = operation;
+}
+
+function ponceletChangePoint(point, tangent) {
+    // select the other point on tangent
+    var points = blueCircle.intersectLine(tangent);
+    if (points.length == 0) {
+        throw new GeometricMisconfiguration("change-point");
+    } else if (points.length > 1) {
+        if (points[0].equal(point)) {
+            return points[1];
+        } else {
+            return points[0];
+        }
+    } else {
+        // if the intersection is a single point, no change
+        return point;
+    }
+}
+
+function ponceletChangeTangent(point, tangent) {
+    // select the other tangent
+    var tangents = findTangents(point, redCircle);
+    if (tangents.length == 0) {
+        throw new GeometricMisconfiguration("change-tangent");
+    } else if (tangents.length > 1) {
+        if (tangents[0].equal(tangent)) {
+            return tangents[1];
+        } else {
+            return tangents[0];
+        }
+    } else {
+        return tangent;
+    }
+}
+
+function ponceletNextStep(args) {
+    var nextPoint, nextTangent;
+    nextPoint = ponceletChangePoint(args.point, args.tangent);
+    pc.setColor("black");
+    pc.draw(nextPoint);
+    nextTangent = ponceletChangeTangent(nextPoint, args.tangent);
+    pc.setColor("lightgray");
+    pc.draw(nextTangent);
+    return {"point": nextPoint, "tangent": nextTangent};
+}
+
+function drawStep(args) {
+    pc.setColor("black");
+    pc.draw(args.point);
+    pc.setColor("gray");
+    pc.draw(args.tangent);
+}
+
 function ponceletStep() {
-    pc.drawMany(findTangents(blueStartingPoint, redCircle));
+    if (blueCircle && redCircle && blueStartingPoint) {
+        if (!redStartingTangent) {
+            computeRedTangent();
+            redrawPoncelet();
+        }
+        if (!currentPoncelet) {
+            currentPoncelet = {"point": blueStartingPoint,
+                               "tangent": redStartingTangent};
+        }
+        try {
+            currentPoncelet = ponceletNextStep(currentPoncelet);
+            // drawStep(currentPoncelet);
+        } catch(e) {
+            console.log("Exception: " + e.message + " in " + e.operation);
+        }
+    } else {
+        // TODO alert user
+    }
 }
