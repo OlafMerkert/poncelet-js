@@ -2,6 +2,12 @@
 
 // plane geometry: points, lines and circles
 
+var EPS = Math.pow(10, -8);
+
+function almost0(number) {
+    return Math.abs(number) < EPS;
+}
+
 function CollinearPointsException(line) {
     this.line = line;
     this.message = "Given points are collinear, cannot produce a circle through all of them.";
@@ -23,7 +29,7 @@ function Point(x, y) {
         fill(circle, color);
     };
     this.equal = function (point) {
-        return (point.x - this.x == 0) && (point.y - this.y == 0);
+        return almost0(point.x - this.x) && almost0(point.y - this.y);
     };
     // a vector from this point
     this.relative = function (point) {
@@ -39,9 +45,14 @@ function Point(x, y) {
         return Math.sqrt(Math.pow(point.x - this.x, 2) +
                          Math.pow(point.y - this.y, 2));
     };
+    this.inner = function (point) {
+        return this.x * point.x + this.y * point.y;
+    };
+    this.norm2 = function () {
+        return Math.pow(this.x, 2) + Math.pow(this.y, 2);
+    };
     this.norm = function () {
-        return Math.sqrt(Math.pow(this.x, 2) +
-                         Math.pow(this.y, 2));
+        return Math.sqrt(this.norm2());
     };
     this.scaled = function (scaleFactor) {
         return new Point(scaleFactor * this.x, scaleFactor * this.y);
@@ -71,7 +82,7 @@ function Point(x, y) {
         return new Line(this.midpoint(point), this.relative(point).rotate90());
     };
     this.collinearQ = function (point) {
-        return (this.x * point.y - this.y * point.x) == 0;
+        return almost0(this.x * point.y - this.y * point.x);
     };
     this.add = function (point) {
         return new Point(this.x + point.x, this.y + point.y);
@@ -197,31 +208,32 @@ function Circle(center, radius) {
     this.intersectLine = function (line) {
         // need to solve this equation in t:
         // line.point -this.center + t * line.direction == this.radius
-        var a = Math.pow(line.direction.x, 2) + Math.pow(line.direction.x, 2);
-        var b = 2 * (line.direction.x * (line.point.x - this.center.x) +
-                     line.direction.y * (line.point.y - this.center.y));
-        var c = Math.pow(line.point.x - this.center.x, 2) + Math.pow(line.point.y - this.center.y, 2) - Math.pow(this.radius, 2);
-        var ts = solveQuadratic(a, b, c);
-        if (ts.length == 0) {
+        var poCe = this.center.relative(line.point);
+        var a = line.direction.norm2();
+        var b = 2 * poCe.inner(line.direction);
+        var c = poCe.norm2() - Math.pow(this.radius, 2);
+        var t = solveQuadratic(a, b, c);
+        if (t.length == 0) {
             return [];
-        } else if (ts.length == 1) {
-            return [this.param(ts[0])];
+        } else if (t.length == 1) {
+            return [line.param(t[0])];
         } else {
-            return [this.param(ts[0]), this.param(ts[1])];
+            return [line.param(t[0]), line.param(t[1])];
         }
     };
 }
 
 function solveQuadratic(a, b, c) {
+    // console.log("a=" + a + " b=" + b + " c=" + c);
     // solve equation a * X^2 + b * X + c == 0
     var D = (Math.pow(b, 2) - 4 * a * c);
-    if (D < 0) {
-        return [];
-    } else if (D == 0) {
-        return [-b/(2*a)];
-    } else {
+    if (D > 0) {
         var sqrtD = Math.sqrt(D);
         return [(-b + sqrtD)/(2*a), (-b - sqrtD)/(2*a)];
+    } else if (almost0(D))  {
+        return [-b/(2*a)];
+    } else {
+        return [];
     }
 }
 
@@ -243,15 +255,15 @@ function findTangents(point, circle) {
     r = circle.radius;
     d = circle.center.relative(point);
     R = d.norm();
-    if (R < r) {
-        return [];
-    } else if (R==r) {
-        return [new Line(point, d.rotate90())];
-    } else {
+    if (R > r) {
         var p0 = d.scaled(r/R);
         var p1 = p0.rotateCos(r/R, true);
         var p2 = p0.rotateCos(r/R, false);
         return [new Line(circle.center.add(p1), p1.rotate90()),
                 new Line(circle.center.add(p2), p2.rotate90())];
+    } else if (almost0(R-r)) {
+        return [new Line(point, d.rotate90())];
+    } else {
+       return [];
     }
 }
