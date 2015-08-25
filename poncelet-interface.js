@@ -36,6 +36,10 @@ function redrawPoncelet() {
 function resetPoncelet() {
     pc.reset();
     currentPoncelet = undefined;
+    redCircle = undefined;
+    blueCircle = undefined;
+    blueStartingPoint = undefined;
+    redStartingTangent = undefined;
 }
 
 function PointSelector(numberOfPoints, action) {
@@ -49,10 +53,14 @@ function PointSelector(numberOfPoints, action) {
             this.points.push(point);
             this.pc.draw(point);
             if (this.points.length >= this.numberOfPoints) {
-                this.action(this.points);
                 // clean up events
                 $(this.pc.canvas).off("click");
+                // then do action, so the handler gets cleaned up even
+                // if there is some error in the `action'
+                this.action(this.points);
             }
+        } else {
+            console.log("Stale event handler.");
         }
     };
     this.askNextPoint = function (pc) {
@@ -121,6 +129,8 @@ function selectStartingPoint() {
                 redrawPoncelet();
             });
         ps.askNextPoint(pc);
+    } else {
+        messageInfo("Please select the <span class='blue'>blue circle</span> first");
     }
 }
 
@@ -130,6 +140,7 @@ function computeRedTangent() {
         if (tangents.length > 0) {
             redStartingTangent = tangents[0];
         } else {
+            messageWarning("Choose a different starting point, the current one does not lie on any tangent of the <span class='red'>red circle</span>.");
             throw new GeometricMisconfiguration("compute-tangent");
         }
     }
@@ -214,6 +225,13 @@ function ponceletStep(n) {
             console.log("Exception: " + e.message + " in " + e.operation);
         }
     } else {
-        // TODO alert user
+        if (!blueCircle) {
+            messageInfo("You need to choose a <span class='blue'>blue circle</span> before you can play.");
+        } else if (!blueStartingPoint) {
+            messageInfo("You need to choose a starting point on the the <span class='blue'>blue circle</span> before you can play.");
+        }
+        if (!redCircle) {
+            messageInfo("You need to choose a <span class='red'>red circle</span> before you can play.");
+        }
     }
 }
