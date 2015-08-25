@@ -22,6 +22,12 @@ function MyPaper(id) {
     this.reset = function () {
         this.paper.clear();
     };
+    this.setAspectRatio = function (ratio) {
+        var $c = $(this.canvas);
+        this.width = $c.width();
+        $c.height(Math.ceil(this.width / ratio));
+        this.height = $c.height();
+    };
 }
 
 function fill(obj, color) {
@@ -49,7 +55,14 @@ function getPonceletPaper() {
 
 var pc;
 
+var aspect = 3/2;
+
 window.onload = function () {
     console.log("preparing paper");
     pc = getPonceletPaper();
+    pc.setAspectRatio(aspect);
+}
+
+window.onresize = function () {
+    pc.setAspectRatio(aspect);
 }
