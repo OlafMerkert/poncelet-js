@@ -27,6 +27,12 @@
       margin: 1ex;
       margin-bottom: 3ex;
       }
+      .red {
+      color: red;
+      }
+      .blue {
+      color: blue;
+      }
     </style>
   </head>
   <script src="/scripts/jquery-1.11.3.js"></script>
@@ -42,12 +48,19 @@
         <div class="navbar-header">
           <a class="navbar-brand">The Game of Poncelet</a>
         </div>
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#">Game</a></li>
+            <li><a href="#explanation">Explanation</a></li>
+            <li><a href="#instruction">Instructions</a></li>
+          </ul>
+        </div>
       </div>
     </div>
     <ul class="breadcrumb">
       <li><a href="/">
-          <span class="glyphicon glyphicon-home"></span>
-          <span class="sr-only">home</span>
+        <span class="glyphicon glyphicon-home"></span>
+        <span class="sr-only">home</span>
       </a></li>
       <li><a href="/~olaf/">Olaf's Homepage</a></li>
       <li><a href="#">Game of Poncelet</a></li>
@@ -55,27 +68,112 @@
     
     <div class="container">
       <div class="bs-body">
-      <h1>The Game of Poncelet</h1>
-      <p>Play the game of Poncelet! Choose two circles and a point on the blue circle, the find a tangent to the red circle going through the point. The tangent meets the blue circle in another point, and this point has another tangent to the red circle.</p>
+        <h1>The Game of Poncelet</h1>
+        <p>Play the game of Poncelet! Place two circles, red and blue,
+        set a starting point on the blue circle, and watch what
+        happens. For more explanations see <a
+        href="#explanation">below</a>.</p>
 
-      <div class="btn-toolbar controls">
-        <div class="btn-group">
-          <button type="button" class="btn btn-default" onclick="resetPoncelet()">Reset</button>
-        </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default" onclick="selectBlueCircle()">Select Blue Circle</button>
-          <button type="button" class="btn btn-default" onclick="selectRedCircle()">Select Red Circle</button>
-        </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default" onclick="selectStartingPoint()">Choose Starting Point</button>
-          <button type="button" class="btn btn-default" onclick="ponceletStep()">Do a step</button>
-          <button type="button" class="btn btn-default" onclick="ponceletStep(10)">Do 10 step</button>
-          <!-- <button type="button" class="btn btn-default" onclick="ponceletStep(100)">Do 100 step</button> -->
+        <div class="btn-toolbar controls">
+          <div class="btn-group">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="resetPoncelet()">
+              Reset
+            </button>
+          </div>
+          <div class="btn-group">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="selectBlueCircle()">
+              Select Blue Circle
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="selectRedCircle()">
+              Select Red Circle
+            </button>
+          </div>
+          <div class="btn-group">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="selectStartingPoint()">
+              Choose Starting Point
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="ponceletStep()">
+              Do a step
+            </button>
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="ponceletStep(10)">
+              Do 10 steps
+            </button>
+          </div>
         </div>
 
+        <div id="poncelet-canvas">
+        </div>
+
+        <!-- explain how to use the UI -->
+        <div class="container">
+          <a name="explanation"></a>
+          <h2>What happens?</h2>
+          <p>Starting with a point on the <span class="blue">blue
+          circle</span>, and a tangent to the <span class="red">red
+          circle</span> containing this point, there are two
+          elementary operations we may perform.</p>
+
+          <p>On the one hand, if a line meets the <span class="blue">blue circle</span>, it does
+          so with with multiplicity 2, meaning that either there are
+          two intersection points, or if there is only one
+          intersection point, the line is tangent to the circle. So if
+          already one intersection point is given, we can replace it
+          with the other (or do nothing if the line is tangent).</p>
+
+          <p>On the other hand, if for a given point there is a
+          tangent to the <span class="red">red circle</span>, then
+          there either the point lies already on the <span
+          class="red">red circle</span>, or there is also a second
+          tangent. The second operation then switches the tangents (or
+          does nothing if the point is on the <span class="red">red
+          circle</span>).</p>
+
+          <p>If we compose these two operations, we obtain the
+          <em>Game of Poncelet</em>, which you can play above. The
+          question is, can you find a configuration where the game
+          returns to the starting point?</p>
+
+          <a name="instruction"></a>
+          <h2>How to use the web app</h2>
+          <ol>
+            <li>You can place the circles by clicking three times on
+            the canvas. Unless your three points lie on a line, there
+            exists a unique circle containing these three points.</li>
+
+            <li>Once you have placed the <span class="blue">blue
+            circle</span>, click anywhere on the canvas to choose a
+            starting point, which will automatically be projected on
+            the <span class="blue">blue circle</span>, if you avoid
+            the centre.</li>
+
+            <li>You do not need to choose the tangent to the <span
+            class="red">red circle</span>, it will be computed
+            automatically. However, this is only possible if the
+            starting point lies outside the <span class="red">red
+            circle</span>, so keep this in mind when setting up the
+            configuration of the circles.</li>
+
+            <li>Now you can play, and also apply the operation 10
+            times at once.</li>
+
+            <li>If you wish to try a different configuration, click
+            the reset button, or start selecting a circle again.</li>
+          </ol>
+
+        </div>
       </div>
-
-      <div id="poncelet-canvas"></div>
-      </div>
-    </body>
-  </html>
+    </div>
+  </body>
+</html>
