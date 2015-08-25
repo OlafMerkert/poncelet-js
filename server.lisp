@@ -16,7 +16,8 @@
 
 (setup-static-content (file-url "") (file-path "poncelet.html"))
 
-(dolist (script '("plane-geometry.js"
+(dolist (script '("messages-helper.js"
+                  "plane-geometry.js"
                   "raphael-helper.js"
                   "poncelet-interface.js"))
   (setup-static-content (file-url script) (file-path script)))
