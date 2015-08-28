@@ -36,10 +36,24 @@ var styleMap = {
     "error":   ["user-help", "bg-danger"]
 }
 
+var iconMap = {
+    //"default": "",
+    "info":    "glyphicon-info-sign",
+    "success": "glyphicon-ok-sign",
+    "warning": "glyphicon-alert",
+    "error":   "glyphicon-alert"
+}
+
 function addMessage(content, style) {
     var $c = getMessageContainer();
     console.log("Message: " + content);
-    var $m = $("<p>" + content + "</p>");
+    var icon = iconMap[style];
+    if (icon) {
+        icon = "<span class='glyphicon " + icon + "'></span>&nbsp; ";
+    } else {
+        icon = "";
+    }
+    var $m = $("<p>" + icon + content + "</p>");
     var s = styleMap[style];
     if (s) {
         for (var i = 0; i < s.length; i++) {
