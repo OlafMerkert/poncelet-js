@@ -5,7 +5,7 @@
 (in-package :poncelet-server-config)
 
 ;; serve the html and scripts of the site
-(defpar base-url "/~olaf/math/poncelet/")
+(defpar base-url "/math/poncelet/")
 (defpar base-path #P"~/Projekte/poncelet-js/")
 
 (defun file-url (f)
