@@ -6,7 +6,7 @@
 
 ;; serve the html and scripts of the site
 (defpar base-url "/math/poncelet/")
-(defpar base-path #P"~/Projekte/poncelet-js/")
+(defpar base-path #P"/home/olaf/Projekte/poncelet-js/")
 
 (defun file-url (f)
   (mkstr base-url f))
